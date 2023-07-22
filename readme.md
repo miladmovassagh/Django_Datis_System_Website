@@ -1,1 +1,1 @@
-Datis System website with Django for Backend and HTML,CSS,Bootstrap,JavaScript for Frontend
+Datis System website in Django for Back-end and HTML,CSS,Bootstrap,JavaScript for Front-end
