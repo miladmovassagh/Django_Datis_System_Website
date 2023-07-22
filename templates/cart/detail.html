@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}
+    سبد خرید
+{% endblock title %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xl-12">
+                <h3 class="text-center">سبد خرید</h3>
+                <hr>
+                {% if request.session.cart %}
+                    <div style="overflow-x:auto;">
+                        <table class="table table-striped" style="text-align: center;">
+                            <thead>
+                                <tr>
+                                    <th scope="col">تصویر</th>
+                                    <th scope="col">نام</th>
+                                    <th scope="col">تعداد</th>
+                                    <th scope="col">حذف</th>
+                                    <th scope="col">قیمت واحد</th>
+                                    <th scope="col">قیمت کل</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart %}
+                                {% with product=item.product  %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{product.get_absolute_url}}">
+                                                <img class="rounded-lg shadow" src="{{product.image.url}}" height="100" width="100" alt="">
+                                            </a>
+                                        </td>
+                                        <td><a href="{{product.get_absolute_url}}" class="text-decoration-none text-black">{{product.name}}</a></td>
+                                        <td>
+                                            <form action="{% url 'cart:cart_add' product.id %}" method="POST">
+                                                {% comment %} {{item.update_quantity_form|crispy}} {% endcomment %}
+                                                {{item.update_quantity_form.quantity}}
+                                                {{item.update_quantity_form.override}}
+                                                <input class="btn btn-dark btn-sm" type="submit" value="به روز رسانی">
+                                                {% csrf_token %}
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <form action="{% url 'cart:cart_remove' product.id %}" method="POST">
+                                                <button type="submit" class="btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                                                    </svg>
+                                                </button>
+                                                {% csrf_token %}
+                                            </form>
+                                        </td>
+                                        <td>{{item.price|intcomma:False}} تومان</td> {% comment %} {{product.price}} {% endcomment %}
+                                        <td>{{item.total_price|intcomma:False}} تومان</td>
+                                    </tr>
+                                {% endwith %}
+                                {% endfor %}
+                                <tr>
+                                    <td><h5>جمع سبد خرید</h5></td>
+                                    <td colspan="4"></td>
+                                    <td>{{cart.get_total_price|intcomma:False}} تومان</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div dir="ltr" class="col-md-12 col-lg-12 col-xl-12 mb-3">
+                        <a href="{% url 'orders:order_create' %}" class="btn btn-danger">ثبت سفارش</a>
+                    </div>   
+                    
+                {% else %}
+                    <p class="text-center" style="font-size: x-large;">
+                        سبد خرید شما خالی است!
+                    </p>
+                {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+
+
+{% endblock content %}
+    

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}
+  لیست محصولات
+{% endblock title %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row mt-4">
+      <div class="col-md-2 col-lg-2 col-xl-2">
+        <div id="list-example" class="list-group">
+          <a class="list-group-item list-group-item-action {% if not category %}active{% endif %}" href="{% url 'shop:product_list' %}" style="text-decoration: none;">تمام محصولات</a>
+          {% for cat in categories %}
+            <a class="list-group-item list-group-item-action {% if cat == category %}active{% endif %}" href="{{cat.get_absolute_url}}" style="text-decoration: none;">{{cat.name}}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-md-10 col-lg-10 col-xl-10">
+          <div class="row">
+            {% if not products %}
+              <div class="row text-center mt-5">
+                <p>هیچ محصولی در دسته بندی {{category}} وجود ندارد</p>
+              </div>
+            {% else %}
+              {% for product in products %}
+                  <div class="col-md-4 col-lg-4 col-xl-4 text-center mb-4">
+                    <a href="{{product.get_absolute_url}}" class="text-decoration-none">
+                      <img src="{{product.image.url}}" alt="{{product.name}}" style="height: 200px; width: 200px; margin-bottom: 3%;">
+                    </a>
+                    <div>
+                      <a href="{{product.get_absolute_url}}" class="text-decoration-none text-dark"><h6 class="text-center mb-3">{{product.name}}</h6></a>
+                      <p>{{product.price|intcomma:False}} تومان</p>
+                    </div>
+                  </div>
+              {% endfor %}
+              <div class="row">
+                <div class="pagination col-md-2 col-lg-2 col-xl-2 mx-auto mt-5 mb-2">
+                  <span class="step-links mx-auto">
+                    {% if products.has_next %}
+                        <a href="?page={{products.next_page_number}}">{{products.next_page_number}}</a>
+                    {% endif %}
+                  </span>
+            
+                  <span class="current mx-auto">
+                        {{products.number}}
+                        {% comment %} Page {{ products.number }} of {{ products.paginator.num_pages }} {% endcomment %}
+                  </span>
+
+                  <span class="step-links mx-auto">
+                    {% if products.has_previous %}
+                        <a href="?page={{products.previous_page_number}}">{{products.previous_page_number}}</a>
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            {% endif %}
+          </div>  
+          
+      </div>  
+    </div>
+  </div>
+{% endblock content %}

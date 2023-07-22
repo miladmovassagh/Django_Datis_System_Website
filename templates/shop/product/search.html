@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block title %}
+    جستجوی {{name}} 
+{% endblock title %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row mt-4">
+      <div class="row text-center">
+        <h4>محصولات مرتبط با {{name}}</h4>
+      </div>
+        <div class="row mx-auto">
+          {% if not products %}
+            <div class="row text-center mt-5">
+              <p>هیچ محصول مرتبطی با {{name}} یافت نشد!</p>
+            </div>
+          {% else %}
+            {% for product in products %}
+                <div class="col-md-4 col-lg-4 col-xl-4 text-center">
+                  <a href="{{product.get_absolute_url}}" class="text-decoration-none">
+                    <img src="{{product.image.url}}" alt="{{product.name}}" style="height: 200px; width: 200px;">
+                  </a>
+                  <div>
+                    <a href="{{product.get_absolute_url}}" class="text-decoration-none text-dark"><h5 class="text-center mb-3">{{product.name}}</h5></a>
+                    <p>{{product.price|intcomma:False}} تومان</p></div>
+                  </div>
+            {% endfor %}
+            <div class="row">
+              <div class="pagination col-md-2 col-lg-2 col-xl-2 mx-auto mt-5 mb-2">
+                <span class="step-links mx-auto">
+                  {% if products.has_next %}
+                      <a href="?page={{products.next_page_number}}">{{products.next_page_number}}</a>
+                  {% endif %}
+                </span>
+          
+                <span class="current mx-auto">
+                      {{products.number}}
+                      {% comment %} Page {{ products.number }} of {{ products.paginator.num_pages }} {% endcomment %}
+                </span>
+
+                <span class="step-links mx-auto">
+                  {% if products.has_previous %}
+                      <a href="?page={{products.previous_page_number}}">{{products.previous_page_number}}</a>
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+           
+          {% endif %}
+        </div>  
+          
+    </div>
+  </div>
+{% endblock content %}

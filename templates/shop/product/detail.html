@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% load humanize %}
+
+{% block title %}
+    {{product.name}}
+{% endblock title %}
+
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/detail1.css' %}">
+{% endblock link %}
+    
+{% block content %}
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <div class="col-md-4 col-lg-4 col-xl-4">
+                <div class="row">
+                    <img id="main-picture" src="{{product.image.url}}" width="100%" height="300px" alt="" style="object-fit: contain;">
+                </div>
+                {% for picture in pictures %}
+                    <img class="picture" src="{{picture.images.url}}" width="45%" height="150px" alt="" style="object-fit: contain; margin: 2%;">
+                {% endfor %}
+            </div>
+            <div class="col-md-5 col-lg-5 col-xl-5">
+                <div class="row">
+                    <a href="{{product.category.get_absolute_url}}" class="text-decoration-none">{{product.category}}</a>
+                    <h5 style="margin-top: 1%;">{{product.name}}</h5>
+                    <hr>
+                </div>
+                <div class="row">
+                    <b>مشخصات کالا</b>
+                    <p>{{product.description|linebreaks}}</p>
+                </div>
+                <div class="row">
+                    <p style="font-weight: bolder; font-size:large;">{{product.price|intcomma:False}} تومان</p>
+                </div>
+                <div class="row">
+                    <form action="{% url 'cart:cart_add' product.id %}" method="POST">
+                        <!--
+                            <label for="quantity">تعداد:</label>
+                            <input type="number" name="quantity" id="quantity" min="1" max="20">
+                        -->
+                        {{form}}
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                            </svg>
+                            افزودن به سبد خرید
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+<!-- col-md-5 col-lg-5 col-xl-5
+    باعث میشه وقتی صفحه کوچیک میشه ستون ها و سطرهای هر ستون زیر هم بیایند
+    یعنی اول ستون اول میاد و سطرهاش به ترتیب زیر هم میان و سپس سطرهای ستون 2 به ترتیب زیر هم میان و به همین ترتیب
+    col-5 یا col-sm-5
+    ولی وقتی اینجوری می نویسیم دیگه شرایط بالا را ندارد و وقتی صفحه کوچک هم می شود فقط عناصر را کوچک می کند و ترتیب قرار گرفتن آنها مثل حالت عادی است و تغییر نمی کند که باعث میشه ریسپانسیو نباشد
+-->

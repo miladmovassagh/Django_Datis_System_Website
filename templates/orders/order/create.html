@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load humanize %}
+
+{% block title %}
+    پرداخت
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-lg-12 col-xl-12">
+            <h3 class="text-center">پرداخت</h3>
+            <hr>
+            {% comment %} <ul class="list-group">
+                {% for item in cart %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <img src="{{item.product.image.url}}" class="rounded-circle img-thumbnail border-secondary" height="60" width="60" alt="">
+                    {{item.product.name}} - قیمت {{item.price}} تومان <!-- {{item.total_price}} -->
+                    <span class="badge badge-primary badge-pill">{{item.quantity}}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <hr> {% endcomment %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7 col-lg-7 col-xl-7"> 
+            <div class="mb-3" style="border: 1px solid #999; padding: 2%; border-radius: 12px;">
+                <p>
+                    <b>نام و نام خانوادگی:</b> {{user.first_name}} {{user.last_name}}
+                </p>
+                <p>
+                    <b>ارسال به:</b> {{user.address}}
+                </p>
+            </div>
+            <div>
+                <form action="" method="POST" id="payment_form">
+                    {% csrf_token %}
+                    <div class="mb-3" style="border: 1px solid #999; padding: 2%; border-radius: 10px;">
+                        <h5 class="mb-3">روش ارسال</h5>
+                        <label for="send_method">ارسال با پست</label>
+                        <input type="radio" name="send_method" id="send_method" value="ارسال با پست"  checked>
+                        <p style="margin-top: 2%;">
+                            هزینه ارسال: رایگان
+                        </p>
+                        <p>
+                            زمان تحویل: 2 الی 5 روز کاری
+                        </p>
+                    </div>
+                    <div class="mb-3" style="border: 1px solid #999; padding: 2%; border-radius: 10px;">
+                        <h5 class="mb-3">روش پرداخت</h5>
+                        <label for="payment_method">پرداخت اینترنتی</label>
+                        <input type="radio" name="payment_method" id="payment_method" value="پرداخت اینترنتی"  checked>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-5 col-lg-5 col-xl-5 mb-3">
+            <div class="col-md-10 col-lg-10 col-xl-10 mb-3" style="border: 1px solid #999; padding: 5%; border-radius: 10px;">
+                <div class="row">
+                    <div class="col-7">
+                        <p>قیمت کالاها:</p>
+                    </div>
+                    <div class="col-5">
+                        <p>{{cart.get_total_price|intcomma:False}} تومان</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-7">
+                        <p>هزینه ارسال:</p>
+                    </div>
+                    <div class="col-5">
+                        <p>رایگان</p>
+                    </div>
+                </div>
+                <hr>
+                {% if cart.coupon %}
+                    <div class="row text-danger">
+                        <div class="col-7">
+                            <p>میزان تخفیف:</p>
+                        </div>
+                        <div class="col-5">
+                            <p>{{cart.coupon.discount}}%</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-7">
+                            <p>قابل پرداخت:</p>
+                        </div>
+                        <div class="col-5">
+                            <p>{{cart.get_total_price_after_discount|intcomma:False}} تومان</p>
+                        </div>
+                    </div>
+                    <hr>
+                {% else %}
+                    <div class="row">
+                        <div class="col-7">
+                            <p>قابل پرداخت:</p>
+                        </div>
+                        <div class="col-5">
+                            <p>{{cart.get_total_price|intcomma:False}} تومان</p>
+                        </div>
+                    </div>
+                    <hr>        
+                {% endif %}
+                <form action="{% url 'coupons:apply' %}" method="POST">
+                    <!-- {{coupon_apply_form}} -->
+                    <label for="code">کد تخفیف:</label>
+                    {% if cart.coupon %}
+                        <input type="text" id="code" name="code" value="{{cart.coupon.code}}" required class="input-group-lg">
+                    {% else %}
+                        <input type="text" id="code" name="code" required style="width: 40%;">    
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary btn-sm">اعمال</button>
+                    {% if cart.coupon %}
+                        <a class="btn btn-dark btn-sm" href="{% url 'coupons:remove' %}">حذف کد</a>
+                    {% endif %}
+                    {% csrf_token %}
+                </form>
+            </div>
+            <div class="col-md-10 col-lg-10 col-xl-10 mb-3 text-center">
+                <button type="submit" class="btn btn-danger" style="width: 60%;" form="payment_form">پرداخت</button> 
+            </div>    
+        </div>
+    </div>
+    
+</div>
+
+{% endblock content %}
